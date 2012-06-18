@@ -162,6 +162,36 @@ class ModelDictTest(TransactionTestCase):
         self.assertEquals(len(mydict), 11)
         self.assertEquals(mydict['hello'], 'bar2')
 
+    def test_setdefault(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+
+        with self.assertRaises(KeyError):
+            mydict['hello']
+
+        ret = mydict.setdefault('hello', 'world')
+        self.assertEqual(ret, 'world')
+        self.assertEqual(mydict['hello'], 'world')
+
+        ret = mydict.setdefault('hello', 'world2')
+        self.assertEqual(ret, 'world')
+        self.assertEqual(mydict['hello'], 'world')
+
+    def test_setdefault_instances(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+
+        with self.assertRaises(KeyError):
+            mydict['hello']
+
+        instance = ModelDictModel(key='hello', value='world')
+        ret = mydict.setdefault('hello', instance)
+        self.assertEqual(ret, 'world')
+        self.assertEqual(mydict['hello'], 'world')
+
+        instance2 = ModelDictModel(key='hello', value='world2')
+        ret = mydict.setdefault('hello', instance2)
+        self.assertEqual(ret, 'world')
+        self.assertEqual(mydict['hello'], 'world')
+
     def test_django_signals_are_connected(self):
         from django.db.models.signals import post_save, post_delete
         from django.core.signals import request_finished

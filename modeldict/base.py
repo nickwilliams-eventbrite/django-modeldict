@@ -94,6 +94,7 @@ class CachedDict(object):
     def setdefault(self, key, value):
         if key not in self:
             self[key] = value
+        return self[key]
 
     def get_default(self, key):
         return NoValue
