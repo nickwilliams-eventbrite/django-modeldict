@@ -54,7 +54,7 @@ class ModelDictTest(TransactionTestCase):
 
         request_finished.send(sender=self)
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, None)
+        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
 
         # These should still error because even though the cache repopulates (local cache)
         # the remote cache pool does not
@@ -107,13 +107,13 @@ class ModelDictTest(TransactionTestCase):
 
         self.client.get('/')
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, None)
+        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
         self.assertEquals(mydict['test_modeldict_expirey'], 'hello')
         self.assertEquals(len(mydict._local_cache), base_count + 1)
 
         request_finished.send(sender=self)
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, None)
+        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
         self.assertEquals(mydict['test_modeldict_expirey'], 'hello')
         self.assertEquals(len(mydict._local_cache), base_count + 1)
 
@@ -224,7 +224,7 @@ class CacheIntegrationTest(TestCase):
     def test_switch_access_without_local_cache(self):
         self.mydict['hello'] = 'foo'
         self.mydict._local_cache = None
-        self.mydict._last_checked_for_remote_changes = None
+        self.mydict._last_checked_for_remote_changes = 0.0
         self.cache.reset_mock()
         foo = self.mydict['hello']
         self.assertEquals(foo, 'foo')
@@ -242,7 +242,7 @@ class CacheIntegrationTest(TestCase):
 
     def test_switch_access_with_expired_local_cache(self):
         self.mydict['hello'] = 'foo'
-        self.mydict._last_checked_for_remote_changes = None
+        self.mydict._last_checked_for_remote_changes = 0.0
         self.cache.reset_mock()
         foo = self.mydict['hello']
         self.assertEquals(foo, 'foo')
@@ -304,7 +304,7 @@ class CachedDictTest(TestCase):
         self.assertFalse(_update_cache_data.called)
 
     def test_is_expired_missing_last_checked_for_remote_changes(self):
-        self.mydict._last_checked_for_remote_changes = None
+        self.mydict._last_checked_for_remote_changes = 0.0
         self.assertTrue(self.mydict.local_cache_has_expired())
         self.assertFalse(self.cache.get.called)
 

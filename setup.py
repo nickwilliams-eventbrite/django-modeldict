@@ -8,7 +8,7 @@ except:
     pass
 
 tests_require = [
-    'Django',
+    'Django==1.5',
     'celery',
     'django-nose>=1.0',
     'mock>=0.8.0',
