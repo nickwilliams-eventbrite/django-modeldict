@@ -12,7 +12,7 @@ class CachedDict(object):
         self._local_cache = None
         self._local_last_updated = None
 
-        self._last_checked_for_remote_changes = None
+        self._last_checked_for_remote_changes = 0.0
         self.timeout = timeout
 
         self.remote_cache = cache
@@ -102,9 +102,6 @@ class CachedDict(object):
         """
         Returns ``True`` if the in-memory cache has expired.
         """
-        if not self._last_checked_for_remote_changes:
-            return True  # Never checked before
-
         recheck_at = self._last_checked_for_remote_changes + self.timeout
         return time.time() > recheck_at
 
@@ -143,7 +140,7 @@ class CachedDict(object):
         """
         self._local_cache = None
         self._local_last_updated = None
-        self._last_checked_for_remote_changes = None
+        self._last_checked_for_remote_changes = 0.0
 
     def _populate(self, reset=False):
         """
@@ -215,4 +212,4 @@ class CachedDict(object):
     def _cleanup(self, *args, **kwargs):
         # We set _last_updated to a false value to ensure we hit the
         # last_updated cache on the next request
-        self._last_checked_for_remote_changes = None
+        self._last_checked_for_remote_changes = 0.0
