@@ -21,7 +21,7 @@ setup(
     author_email='opensource@disqus.com',
     url='http://github.com/disqus/django-modeldict/',
     description='Stores a model as a dictionary',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     zip_safe=False,
     tests_require=tests_require,
     test_suite='runtests.runtests',
