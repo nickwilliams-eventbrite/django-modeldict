@@ -1,8 +1,7 @@
-from django.db.models.signals import post_save, post_delete
 from django.core.signals import request_finished
+from django.db.models.signals import post_delete, post_save
 
-from modeldict.base import CachedDict, NoValue
-
+from .base import CachedDict, NoValue
 
 try:
     from celery.signals import task_postrun

@@ -1,6 +1,6 @@
 from django.core.signals import request_finished
 
-from modeldict.base import CachedDict
+from .base import CachedDict
 
 
 class RedisDict(CachedDict):

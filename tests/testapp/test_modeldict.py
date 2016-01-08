@@ -1,20 +1,19 @@
 from __future__ import absolute_import
 
-import mock
 import time
 
+import mock
 from django.core.cache import cache
 from django.core.signals import request_finished
 from django.test import TestCase, TransactionTestCase
-
 from modeldict import ModelDict
 from modeldict.base import CachedDict
-from .models import ModelDictModel
+
+from testapp.models import ModelDictModel
 
 
 class ModelDictTest(TransactionTestCase):
     # XXX: uses transaction test due to request_finished signal causing a rollback
-    urls = 'tests.modeldict.urls'
 
     def setUp(self):
         cache.clear()
@@ -190,7 +189,10 @@ class CacheIntegrationTest(TestCase):
         self.assertEquals(self.cache.get.call_count, 0)
         self.assertEquals(self.cache.set.call_count, 2)
         self.cache.set.assert_any_call(self.mydict.remote_cache_key, {u'hello': u'foo'})
-        self.cache.set.assert_any_call(self.mydict.remote_cache_last_updated_key, self.mydict._last_checked_for_remote_changes)
+        self.cache.set.assert_any_call(
+            self.mydict.remote_cache_last_updated_key,
+            self.mydict._last_checked_for_remote_changes
+        )
 
     def test_switch_change(self):
         self.mydict['hello'] = 'foo'
@@ -199,7 +201,10 @@ class CacheIntegrationTest(TestCase):
         self.assertEquals(self.cache.get.call_count, 0)
         self.assertEquals(self.cache.set.call_count, 2)
         self.cache.set.assert_any_call(self.mydict.remote_cache_key, {u'hello': u'bar'})
-        self.cache.set.assert_any_call(self.mydict.remote_cache_last_updated_key, self.mydict._last_checked_for_remote_changes)
+        self.cache.set.assert_any_call(
+            self.mydict.remote_cache_last_updated_key,
+            self.mydict._last_checked_for_remote_changes
+        )
 
     def test_switch_delete(self):
         self.mydict['hello'] = 'foo'
@@ -208,7 +213,10 @@ class CacheIntegrationTest(TestCase):
         self.assertEquals(self.cache.get.call_count, 0)
         self.assertEquals(self.cache.set.call_count, 2)
         self.cache.set.assert_any_call(self.mydict.remote_cache_key, {})
-        self.cache.set.assert_any_call(self.mydict.remote_cache_last_updated_key, self.mydict._last_checked_for_remote_changes)
+        self.cache.set.assert_any_call(
+            self.mydict.remote_cache_last_updated_key,
+            self.mydict._last_checked_for_remote_changes
+        )
 
     def test_switch_access(self):
         self.mydict['hello'] = 'foo'

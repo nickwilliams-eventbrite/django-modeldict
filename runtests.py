@@ -1,53 +1,77 @@
 #!/usr/bin/env python
-from __future__ import absolute_import
+# -*- coding: utf-8 -*-
+from __future__ import print_function
 
+import os
 import sys
-from os.path import dirname, abspath
+import subprocess
 
-sys.path.insert(0, dirname(abspath(__file__)))
-
-from django.conf import settings
-
-if not settings.configured:
-    settings.configure(
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-            }
-        },
-        INSTALLED_APPS=[
-            'django.contrib.contenttypes',
-
-            'modeldict',
-            'tests.modeldict',
-        ],
-        ROOT_URLCONF='',
-        DEBUG=False,
-    )
-
-from django_nose import NoseTestSuiteRunner
+import pytest
 
 
-def runtests(*test_args, **kwargs):
-    if 'south' in settings.INSTALLED_APPS:
-        from south.management.commands import patch_for_test_db_setup
-        patch_for_test_db_setup()
+def main():
+    try:
+        sys.argv.remove('--nolint')
+    except ValueError:
+        run_lint = True
+    else:
+        run_lint = False
 
-    if not test_args:
-        test_args = ['tests']
+    try:
+        sys.argv.remove('--lintonly')
+    except ValueError:
+        run_tests = True
+    else:
+        run_tests = False
 
-    kwargs.setdefault('interactive', False)
+    if run_tests:
+        exit_on_failure(tests_main())
 
-    test_runner = NoseTestSuiteRunner(**kwargs)
+    if run_lint:
+        exit_on_failure(run_flake8())
+        exit_on_failure(run_isort())
 
-    failures = test_runner.run_tests(test_args)
-    sys.exit(failures)
+        # Broken on 2.7.9 due to http://bugs.python.org/issue23063
+        if sys.version_info[:3] != (2, 7, 9):
+            exit_on_failure(run_setup_py_check())
+
+
+def tests_main():
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+    sys.path.insert(0, "tests")
+    return pytest.main()
+
+
+def run_flake8():
+    print('Running flake8 code linting')
+    ret = subprocess.call([
+        'flake8',
+        'modeldict', 'tests'
+    ])
+    print('flake8 failed' if ret else 'flake8 passed')
+    return ret
+
+
+def run_isort():
+    print('Running isort check')
+    return subprocess.call([
+        'isort', '--recursive', '--check-only', '--diff',
+        'modeldict', 'tests'
+    ])
+
+
+def run_setup_py_check():
+    print('Running setup.py check')
+    return subprocess.call([
+        'python', 'setup.py', 'check',
+        '-s', '--restructuredtext', '--metadata'
+    ])
+
+
+def exit_on_failure(ret, message=None):
+    if ret:
+        sys.exit(ret)
+
 
 if __name__ == '__main__':
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option('--verbosity', dest='verbosity', action='store', default=1, type=int)
-    parser.add_options(NoseTestSuiteRunner.options)
-    (options, args) = parser.parse_args()
-
-    runtests(*args, **options.__dict__)
+    main()

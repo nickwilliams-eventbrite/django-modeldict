@@ -1,30 +1,17 @@
 #!/usr/bin/env python
-
 from setuptools import setup, find_packages
 
-try:
-    import multiprocessing  # NOQA
-except:
-    pass
-
-tests_require = [
-    'Django==1.5',
-    'celery',
-    'django-nose>=1.0',
-    'mock>=0.8.0',
-]
-
 setup(
-    name='django-modeldict',
+    name='django-modeldict-yplan',
     version='1.4.2',
     author='DISQUS',
     author_email='opensource@disqus.com',
-    url='http://github.com/disqus/django-modeldict/',
+    maintainer='YPlan',
+    maintainer_email='adam@yplanapp.com',
+    url='http://github.com/YPlan/django-modeldict',
     description='Stores a model as a dictionary',
     packages=find_packages(exclude=['tests']),
     zip_safe=False,
-    tests_require=tests_require,
-    test_suite='runtests.runtests',
     include_package_data=True,
     classifiers=[
         'Framework :: Django',

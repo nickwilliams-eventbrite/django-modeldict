@@ -1,0 +1,9 @@
+celery
+docutils
+flake8
+isort
+mock>=0.8.0
+Pygments
+pytest
+pytest-django
+South
