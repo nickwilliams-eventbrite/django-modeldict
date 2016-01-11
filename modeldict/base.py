@@ -126,7 +126,10 @@ class CachedDict(object):
             # @property that is the remote last_updated value.
             return None  # Never been updated
 
-        return int(remote_last_updated) > self._local_last_updated
+        return (
+            self._local_last_updated is None or
+            int(remote_last_updated) > self._local_last_updated
+        )
 
     def get_cache_data(self):
         """

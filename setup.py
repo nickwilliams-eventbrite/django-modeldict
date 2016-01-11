@@ -21,10 +21,18 @@ setup(
     zip_safe=False,
     include_package_data=True,
     classifiers=[
+        'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python',
         'Topic :: Software Development'
     ],
 )

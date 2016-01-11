@@ -139,7 +139,7 @@ class ModelDictTest(TransactionTestCase):
     def test_save_behavior(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         mydict['hello'] = 'foo'
-        for n in xrange(10):
+        for n in range(10):
             mydict[str(n)] = 'foo'
         self.assertEquals(len(mydict), 11)
         self.assertEquals(ModelDictModel.objects.count(), 11)
