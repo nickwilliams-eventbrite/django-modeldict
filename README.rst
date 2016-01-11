@@ -38,25 +38,25 @@ Example Usage
 .. code-block:: python
 
     # You'll need a model with fields to use as key and value in the dict
-	class Setting(models.Model):
-	    key = models.CharField(max_length=32)
-	    value = models.CharField(max_length=200)
+    class Setting(models.Model):
+        key = models.CharField(max_length=32)
+        value = models.CharField(max_length=200)
 
     # Create the ModelDict...
-	settings = ModelDict(Setting, key='key', value='value', instances=False)
+    settings = ModelDict(Setting, key='key', value='value', instances=False)
 
     # And you can treat it like a normal dict:
 
-	# Missing values = KeyError
-	settings['foo']
-	>>> KeyError
+    # Missing values = KeyError
+    settings['foo']
+    >>> KeyError
 
-	# Sets supported
-	settings['foo'] = 'hello'
+    # Sets supported
+    settings['foo'] = 'hello'
 
-	# Fetch the current value using normal dictionary access
-	settings['foo']
-	>>> 'hello'
+    # Fetch the current value using normal dictionary access
+    settings['foo']
+    >>> 'hello'
 
     # ...or by normal model queries
     Setting.objects.get(key='foo').value
