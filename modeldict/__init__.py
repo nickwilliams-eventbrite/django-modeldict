@@ -1,8 +1,5 @@
-from modeldict.models import ModelDict
+from .models import ModelDict
+__version__ = '1.4.2'
+VERSION = __version__  # legacy
 
-try:
-    VERSION = __import__('pkg_resources').get_distribution('django-modeldict').version
-except Exception as e:
-    VERSION = 'unknown'
-
-__all__ = ('VERSION', 'ModelDict')
+__all__ = ('__version__', 'VERSION', 'ModelDict')
