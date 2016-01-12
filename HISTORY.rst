@@ -4,8 +4,13 @@
 History
 =======
 
-Pending Release
+Pending release
 ---------------
+
+* Any new changes will go here
+
+1.5.0 (2016-01-11)
+------------------
 
 * Forked by YPlan
 * Fixed concurrency TOCTTOU bug for threaded Django servers.
