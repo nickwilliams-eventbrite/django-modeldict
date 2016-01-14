@@ -24,7 +24,7 @@ Tested with all combinations of:
 Install
 -------
 
-Install it with ``pip`` (or ``easy_install``):
+Install it with **pip**:
 
 .. code-block:: bash
 
