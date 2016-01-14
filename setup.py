@@ -35,6 +35,7 @@ setup(
     long_description=readme + '\n\n' + history,
     packages=find_packages(exclude=['tests']),
     zip_safe=False,
+    license='Apache License 2.0',
     include_package_data=True,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
