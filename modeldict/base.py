@@ -1,6 +1,7 @@
 import time
 
 from django.core.cache import cache
+from django.utils import six
 
 NoValue = object()
 
@@ -57,15 +58,15 @@ class CachedDict(object):
 
     def iteritems(self):
         self._populate()
-        return self._local_cache.iteritems()
+        return six.iteritems(self._local_cache)
 
     def itervalues(self):
         self._populate()
-        return self._local_cache.itervalues()
+        return six.itervalues(self._local_cache)
 
     def iterkeys(self):
         self._populate()
-        return self._local_cache.iterkeys()
+        return six.iterkeys(self._local_cache)
 
     def keys(self):
         return list(self.iterkeys())
@@ -86,8 +87,9 @@ class CachedDict(object):
 
         try:
             del self[key]
-        except KeyError:
-            pass
+        except KeyError:  # pragma: no cover
+            # Concurrent edit
+            pass  # pragma: no cover
 
         return value
 

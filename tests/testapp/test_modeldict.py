@@ -92,6 +92,63 @@ class ModelDictTest(TransactionTestCase):
         mydict['foo'].delete()
         self.assertTrue('foo' not in mydict)
 
+    def test_modeldict_instances_auto_create(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value', instances=True, auto_create=True)
+
+        obj = mydict['foo']
+        assert isinstance(obj, ModelDictModel)
+        assert obj.value == ''
+
+    def test_modeldict_len_empty(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        assert len(mydict) == 0
+
+    def test_modeldict_len_one(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert len(mydict) == 1
+
+    def test_modeldict_len_two(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        mydict['hi'] = 'world'
+        assert len(mydict) == 2
+
+    def test_modeldict_iter(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert next(iter(mydict)) == 'hello'
+
+    def test_modeldict_iteritems(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.iteritems()) == [('hello', 'world')]
+
+    def test_modeldict_itervalues(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.itervalues()) == ['world']
+
+    def test_modeldict_iterkeys(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.iterkeys()) == ['hello']
+
+    def test_modeldict_keys(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.keys()) == ['hello']
+
+    def test_modeldict_values(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.values()) == ['world']
+
+    def test_modeldict_items(self):
+        mydict = ModelDict(ModelDictModel, key='key', value='value')
+        mydict['hello'] = 'world'
+        assert list(mydict.items()) == [('hello', 'world')]
+
     def test_modeldict_expirey(self):
         base_count = ModelDictModel.objects.count()
 

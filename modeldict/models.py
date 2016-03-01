@@ -5,8 +5,9 @@ from .base import CachedDict, NoValue
 
 try:
     from celery.signals import task_postrun
-except ImportError:  # celery must not be installed
-    has_celery = False
+except ImportError:  # pragma: no cover
+    # celery must not be installed
+    has_celery = False  # pragma: no cover
 else:
     has_celery = True
 
