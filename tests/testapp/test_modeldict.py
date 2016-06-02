@@ -433,3 +433,29 @@ class CachedDictTest(TestCase):
             self.mydict.remote_cache_last_updated_key
         )
         self.assertEquals(result, True)
+
+    def test_populate_timeout(self):
+        cache.clear()
+        mydict = CachedDict(timeout=100)
+
+        now = int(time.time())
+        mydict.remote_cache.set(mydict.remote_cache_key, {'MYFLAG': 'value1'})
+        mydict.remote_cache.set(mydict.remote_cache_last_updated_key, now)
+
+        # load the local cache from remote cache
+        mydict._populate()
+
+        mydict.remote_cache.set(mydict.remote_cache_key, {'MYFLAG': 'value2'})
+        mydict.remote_cache.set(mydict.remote_cache_last_updated_key, now + 1)
+
+        # before timeout: local cache should not be updated
+        with mock.patch('time.time', mock.Mock(return_value=now + mydict.timeout - 1)):
+            mydict._populate()
+            mydict._populate()
+            mydict._populate()
+        self.assertEquals(mydict._local_cache, {'MYFLAG': 'value1'})
+
+        # after timeout: local cache should be updated
+        with mock.patch('time.time', mock.Mock(return_value=now + mydict.timeout + 1)):
+            mydict._populate()
+        self.assertEquals(mydict._local_cache, {'MYFLAG': 'value2'})

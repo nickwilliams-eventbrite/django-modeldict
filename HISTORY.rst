@@ -7,7 +7,7 @@ History
 Pending release
 ---------------
 
-* Any new changes will go here
+* Fixed local cache never expiring if value was checked too often.
 
 1.5.0 (2016-01-11)
 ------------------
