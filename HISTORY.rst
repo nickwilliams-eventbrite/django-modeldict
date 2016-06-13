@@ -7,6 +7,11 @@ History
 Pending release
 ---------------
 
+* New release notes here
+
+1.5.1 (2016-06-13)
+------------------
+
 * Fixed local cache never expiring if value was checked too often.
 * Use Django's ``cache.set_many`` for more efficient storage.
 
