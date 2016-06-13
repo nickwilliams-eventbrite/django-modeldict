@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import time
 
 import mock
+import pytest
 from django.core.cache import cache
 from django.core.signals import request_finished
 from django.test import TestCase, TransactionTestCase
@@ -29,31 +30,32 @@ class ModelDictTest(TransactionTestCase):
 
         mydict = ModelDict(ModelDictModel, key='key', value='value')
         mydict['foo'] = 'bar'
-        self.assertEquals(mydict['foo'], 'bar')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo'), 'bar')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        assert mydict['foo'] == 'bar'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo') == 'bar'
+        assert ModelDictModel.objects.count() == base_count + 1
         mydict['foo'] = 'bar2'
-        self.assertEquals(mydict['foo'], 'bar2')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo'), 'bar2')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        assert mydict['foo'] == 'bar2'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo') == 'bar2'
+        assert ModelDictModel.objects.count() == base_count + 1
         mydict['foo2'] = 'bar'
-        self.assertEquals(mydict['foo2'], 'bar')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo2'), 'bar')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 2)
+        assert mydict['foo2'] == 'bar'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo2') == 'bar'
+        assert ModelDictModel.objects.count() == base_count + 2
         del mydict['foo2']
-        self.assertRaises(KeyError, mydict.__getitem__, 'foo2')
-        self.assertFalse(ModelDictModel.objects.filter(key='foo2').exists())
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        with pytest.raises(KeyError):
+            mydict.__getitem__('foo2')
+        assert not ModelDictModel.objects.filter(key='foo2').exists()
+        assert ModelDictModel.objects.count() == base_count + 1
 
         ModelDictModel.objects.create(key='foo3', value='hello')
 
-        self.assertEquals(mydict['foo3'], 'hello')
-        self.assertTrue(ModelDictModel.objects.filter(key='foo3').exists(), True)
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 2)
+        assert mydict['foo3'] == 'hello'
+        assert ModelDictModel.objects.filter(key='foo3').exists(), True
+        assert ModelDictModel.objects.count() == base_count + 2
 
         request_finished.send(sender=self)
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
+        assert mydict._last_checked_for_remote_changes == 0.0
 
         # These should still error because even though the cache repopulates (local cache)
         # the remote cache pool does not
@@ -61,36 +63,36 @@ class ModelDictTest(TransactionTestCase):
         # self.assertTrue(ModelDictModel.objects.filter(key='foo3').exists())
         # self.assertEquals(ModelDictModel.objects.count(), base_count + 2)
 
-        self.assertEquals(mydict['foo'], 'bar2')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo'), 'bar2')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 2)
+        assert mydict['foo'] == 'bar2'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo') == 'bar2'
+        assert ModelDictModel.objects.count() == base_count + 2
 
-        self.assertEquals(mydict.pop('foo'), 'bar2')
-        self.assertEquals(mydict.pop('foo', None), None)
-        self.assertFalse(ModelDictModel.objects.filter(key='foo').exists())
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        assert mydict.pop('foo') == 'bar2'
+        assert mydict.pop('foo', None) is None
+        assert not ModelDictModel.objects.filter(key='foo').exists()
+        assert ModelDictModel.objects.count() == base_count + 1
 
     def test_modeldict_instances(self):
         base_count = ModelDictModel.objects.count()
 
         mydict = ModelDict(ModelDictModel, key='key', value='value', instances=True)
         mydict['foo'] = ModelDictModel(key='foo', value='bar')
-        self.assertTrue(isinstance(mydict['foo'], ModelDictModel))
-        self.assertTrue(mydict['foo'].pk)
-        self.assertEquals(mydict['foo'].value, 'bar')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo'), 'bar')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        assert isinstance(mydict['foo'], ModelDictModel)
+        assert mydict['foo'].pk
+        assert mydict['foo'].value == 'bar'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo') == 'bar'
+        assert ModelDictModel.objects.count() == base_count + 1
         old_pk = mydict['foo'].pk
         mydict['foo'] = ModelDictModel(key='foo', value='bar2')
-        self.assertTrue(isinstance(mydict['foo'], ModelDictModel))
-        self.assertEquals(mydict['foo'].pk, old_pk)
-        self.assertEquals(mydict['foo'].value, 'bar2')
-        self.assertEquals(ModelDictModel.objects.values_list('value', flat=True).get(key='foo'), 'bar2')
-        self.assertEquals(ModelDictModel.objects.count(), base_count + 1)
+        assert isinstance(mydict['foo'], ModelDictModel)
+        assert mydict['foo'].pk == old_pk
+        assert mydict['foo'].value == 'bar2'
+        assert ModelDictModel.objects.values_list('value', flat=True).get(key='foo') == 'bar2'
+        assert ModelDictModel.objects.count() == base_count + 1
 
         # test deletion
         mydict['foo'].delete()
-        self.assertTrue('foo' not in mydict)
+        assert 'foo' not in mydict
 
     def test_modeldict_instances_auto_create(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value', instances=True, auto_create=True)
@@ -154,100 +156,101 @@ class ModelDictTest(TransactionTestCase):
 
         mydict = ModelDict(ModelDictModel, key='key', value='value')
 
-        self.assertEquals(mydict._local_cache, None)
+        assert mydict._local_cache is None
 
         mydict['test_modeldict_expirey'] = 'hello'
 
-        self.assertEquals(len(mydict._local_cache), base_count + 1)
-        self.assertEquals(mydict['test_modeldict_expirey'], 'hello')
+        assert len(mydict._local_cache) == base_count + 1
+        assert mydict['test_modeldict_expirey'] == 'hello'
 
         self.client.get('/')
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
-        self.assertEquals(mydict['test_modeldict_expirey'], 'hello')
-        self.assertEquals(len(mydict._local_cache), base_count + 1)
+        assert mydict._last_checked_for_remote_changes == 0.0
+        assert mydict['test_modeldict_expirey'] == 'hello'
+        assert len(mydict._local_cache) == base_count + 1
 
         request_finished.send(sender=self)
 
-        self.assertEquals(mydict._last_checked_for_remote_changes, 0.0)
-        self.assertEquals(mydict['test_modeldict_expirey'], 'hello')
-        self.assertEquals(len(mydict._local_cache), base_count + 1)
+        assert mydict._last_checked_for_remote_changes == 0.0
+        assert mydict['test_modeldict_expirey'] == 'hello'
+        assert len(mydict._local_cache) == base_count + 1
 
     def test_modeldict_no_auto_create(self):
         # without auto_create
         mydict = ModelDict(ModelDictModel, key='key', value='value')
-        self.assertRaises(KeyError, lambda x: x['hello'], mydict)
-        self.assertEquals(ModelDictModel.objects.count(), 0)
+        with pytest.raises(KeyError):
+            mydict['hello']
+        assert ModelDictModel.objects.count() == 0
 
     def test_modeldict_auto_create_no_value(self):
         # with auto_create and no value
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         repr(mydict['hello'])
-        self.assertEquals(ModelDictModel.objects.count(), 1)
-        self.assertEquals(ModelDictModel.objects.get(key='hello').value, '')
+        assert ModelDictModel.objects.count() == 1
+        assert ModelDictModel.objects.get(key='hello').value == ''
 
     def test_modeldict_auto_create(self):
         # with auto_create and value
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         mydict['hello'] = 'foo'
-        self.assertEquals(ModelDictModel.objects.count(), 1)
-        self.assertEquals(ModelDictModel.objects.get(key='hello').value, 'foo')
+        assert ModelDictModel.objects.count() == 1
+        assert ModelDictModel.objects.get(key='hello').value == 'foo'
 
     def test_save_behavior(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         mydict['hello'] = 'foo'
         for n in range(10):
             mydict[str(n)] = 'foo'
-        self.assertEquals(len(mydict), 11)
-        self.assertEquals(ModelDictModel.objects.count(), 11)
+        assert len(mydict) == 11
+        assert ModelDictModel.objects.count() == 11
 
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         m = ModelDictModel.objects.get(key='hello')
         m.value = 'bar'
         m.save()
 
-        self.assertEquals(ModelDictModel.objects.count(), 11)
-        self.assertEquals(len(mydict), 11)
-        self.assertEquals(mydict['hello'], 'bar')
+        assert ModelDictModel.objects.count() == 11
+        assert len(mydict) == 11
+        assert mydict['hello'] == 'bar'
 
         mydict = ModelDict(ModelDictModel, key='key', value='value', auto_create=True)
         m = ModelDictModel.objects.get(key='hello')
         m.value = 'bar2'
         m.save()
 
-        self.assertEquals(ModelDictModel.objects.count(), 11)
-        self.assertEquals(len(mydict), 11)
-        self.assertEquals(mydict['hello'], 'bar2')
+        assert ModelDictModel.objects.count() == 11
+        assert len(mydict) == 11
+        assert mydict['hello'] == 'bar2'
 
     def test_setdefault(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value')
 
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             mydict['hello']
 
         ret = mydict.setdefault('hello', 'world')
-        self.assertEqual(ret, 'world')
-        self.assertEqual(mydict['hello'], 'world')
+        assert ret == 'world'
+        assert mydict['hello'] == 'world'
 
         ret = mydict.setdefault('hello', 'world2')
-        self.assertEqual(ret, 'world')
-        self.assertEqual(mydict['hello'], 'world')
+        assert ret == 'world'
+        assert mydict['hello'] == 'world'
 
     def test_setdefault_instances(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value')
 
-        with self.assertRaises(KeyError):
+        with pytest.raises(KeyError):
             mydict['hello']
 
         instance = ModelDictModel(key='hello', value='world')
         ret = mydict.setdefault('hello', instance)
-        self.assertEqual(ret, 'world')
-        self.assertEqual(mydict['hello'], 'world')
+        assert ret == 'world'
+        assert mydict['hello'] == 'world'
 
         instance2 = ModelDictModel(key='hello', value='world2')
         ret = mydict.setdefault('hello', instance2)
-        self.assertEqual(ret, 'world')
-        self.assertEqual(mydict['hello'], 'world')
+        assert ret == 'world'
+        assert mydict['hello'] == 'world'
 
     def test_django_signals_are_connected(self):
         from django.db.models.signals import post_save, post_delete
@@ -273,8 +276,8 @@ class CacheIntegrationTest(TestCase):
 
     def test_switch_creation(self):
         self.mydict['hello'] = 'foo'
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 1)
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 1
         self.cache.set_many.assert_any_call({
             self.mydict.remote_cache_key: {u'hello': u'foo'},
             self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes,
@@ -284,8 +287,8 @@ class CacheIntegrationTest(TestCase):
         self.mydict['hello'] = 'foo'
         self.cache.reset_mock()
         self.mydict['hello'] = 'bar'
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 1)
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 1
         self.cache.set_many.assert_any_call({
             self.mydict.remote_cache_key: {u'hello': u'bar'},
             self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes
@@ -295,8 +298,8 @@ class CacheIntegrationTest(TestCase):
         self.mydict['hello'] = 'foo'
         self.cache.reset_mock()
         del self.mydict['hello']
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 1)
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 1
         self.cache.set_many.assert_any_call({
             self.mydict.remote_cache_key: {},
             self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes
@@ -309,9 +312,9 @@ class CacheIntegrationTest(TestCase):
         foo = self.mydict['hello']
         foo = self.mydict['hello']
         foo = self.mydict['hello']
-        self.assertEquals(foo, 'foo')
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 0)
+        assert foo == 'foo'
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 0
 
     def test_switch_access_without_local_cache(self):
         self.mydict['hello'] = 'foo'
@@ -319,33 +322,33 @@ class CacheIntegrationTest(TestCase):
         self.mydict._last_checked_for_remote_changes = 0.0
         self.cache.reset_mock()
         foo = self.mydict['hello']
-        self.assertEquals(foo, 'foo')
+        assert foo == 'foo'
         # "1" here signifies that we didn't ask the remote cache for its last
         # updated value
-        self.assertEquals(self.cache.get.call_count, 1)
-        self.assertEquals(self.cache.set_many.call_count, 0)
+        assert self.cache.get.call_count == 1
+        assert self.cache.set_many.call_count == 0
         self.cache.get.assert_any_call(self.mydict.remote_cache_key)
         self.cache.reset_mock()
         foo = self.mydict['hello']
         foo = self.mydict['hello']
         foo = self.mydict['hello']
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 0)
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 0
 
     def test_switch_access_with_expired_local_cache(self):
         self.mydict['hello'] = 'foo'
         self.mydict._last_checked_for_remote_changes = 0.0
         self.cache.reset_mock()
         foo = self.mydict['hello']
-        self.assertEquals(foo, 'foo')
-        self.assertEquals(self.cache.get.call_count, 2)
-        self.assertEquals(self.cache.set_many.call_count, 0)
+        assert foo == 'foo'
+        assert self.cache.get.call_count == 2
+        assert self.cache.set_many.call_count == 0
         self.cache.get.assert_any_call(self.mydict.remote_cache_last_updated_key)
         self.cache.reset_mock()
         foo = self.mydict['hello']
         foo = self.mydict['hello']
-        self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set_many.call_count, 0)
+        assert self.cache.get.call_count == 0
+        assert self.cache.set_many.call_count == 0
 
     def test_does_not_pull_down_all_data(self):
         self.mydict['hello'] = 'foo'
@@ -354,7 +357,7 @@ class CacheIntegrationTest(TestCase):
 
         self.mydict._cleanup()
 
-        self.assertEquals(self.mydict['hello'], 'foo')
+        assert self.mydict['hello'] == 'foo'
         self.cache.get.assert_called_once_with(
             self.mydict.remote_cache_last_updated_key
         )
@@ -373,7 +376,7 @@ class CachedDictTest(TestCase):
         self.mydict._last_checked_for_remote_changes = time.time()
         self.mydict._populate()
 
-        self.assertFalse(_update_cache_data.called)
+        assert not _update_cache_data.called
 
     @mock.patch('modeldict.base.CachedDict._update_cache_data')
     @mock.patch('modeldict.base.CachedDict.local_cache_has_expired', mock.Mock(return_value=False))
@@ -393,16 +396,16 @@ class CachedDictTest(TestCase):
         self.mydict._last_checked_for_remote_changes = time.time()
         self.mydict._populate()
 
-        self.assertFalse(_update_cache_data.called)
+        assert not _update_cache_data.called
 
     def test_is_expired_missing_last_checked_for_remote_changes(self):
         self.mydict._last_checked_for_remote_changes = 0.0
-        self.assertTrue(self.mydict.local_cache_has_expired())
-        self.assertFalse(self.cache.get.called)
+        assert self.mydict.local_cache_has_expired()
+        assert not self.cache.get.called
 
     def test_is_expired_last_updated_beyond_timeout(self):
         self.mydict._local_last_updated = time.time() - 101
-        self.assertTrue(self.mydict.local_cache_has_expired())
+        assert self.mydict.local_cache_has_expired()
 
     def test_is_expired_within_bounds(self):
         self.mydict._last_checked_for_remote_changes = time.time()
@@ -416,7 +419,7 @@ class CachedDictTest(TestCase):
         result = self.mydict.local_cache_is_invalid()
 
         self.cache.get.assert_called_once_with(self.mydict.remote_cache_last_updated_key)
-        self.assertFalse(result)
+        assert not result
 
     def test_is_expired_if_remote_cache_is_new(self):
         # set it to an expired time, but with a local cache
@@ -429,7 +432,7 @@ class CachedDictTest(TestCase):
         self.cache.get.assert_called_once_with(
             self.mydict.remote_cache_last_updated_key
         )
-        self.assertEquals(result, True)
+        assert result
 
     def test_populate_timeout(self):
         cache.clear()
@@ -452,9 +455,9 @@ class CachedDictTest(TestCase):
             mydict._populate()
             mydict._populate()
             mydict._populate()
-        self.assertEquals(mydict._local_cache, {'MYFLAG': 'value1'})
+        assert mydict._local_cache == {'MYFLAG': 'value1'}
 
         # after timeout: local cache should be updated
         with mock.patch('time.time', mock.Mock(return_value=now + mydict.timeout + 1)):
             mydict._populate()
-        self.assertEquals(mydict._local_cache, {'MYFLAG': 'value2'})
+        assert mydict._local_cache == {'MYFLAG': 'value2'}
