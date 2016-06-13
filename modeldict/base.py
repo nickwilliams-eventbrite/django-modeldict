@@ -206,11 +206,10 @@ class CachedDict(object):
         # We only set remote_cache_last_updated_key when we know the cache is
         # current because setting this will force all clients to invalidate
         # their cached data if it's newer
-        self.remote_cache.set(self.remote_cache_key, self._local_cache)
-        self.remote_cache.set(
-            self.remote_cache_last_updated_key,
-            self._last_checked_for_remote_changes
-        )
+        self.remote_cache.set_many({
+            self.remote_cache_key: self._local_cache,
+            self.remote_cache_last_updated_key: self._last_checked_for_remote_changes,
+        })
 
     def _get_cache_data(self):
         raise NotImplementedError

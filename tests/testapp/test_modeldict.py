@@ -274,36 +274,33 @@ class CacheIntegrationTest(TestCase):
     def test_switch_creation(self):
         self.mydict['hello'] = 'foo'
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 2)
-        self.cache.set.assert_any_call(self.mydict.remote_cache_key, {u'hello': u'foo'})
-        self.cache.set.assert_any_call(
-            self.mydict.remote_cache_last_updated_key,
-            self.mydict._last_checked_for_remote_changes
-        )
+        self.assertEquals(self.cache.set_many.call_count, 1)
+        self.cache.set_many.assert_any_call({
+            self.mydict.remote_cache_key: {u'hello': u'foo'},
+            self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes,
+        })
 
     def test_switch_change(self):
         self.mydict['hello'] = 'foo'
         self.cache.reset_mock()
         self.mydict['hello'] = 'bar'
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 2)
-        self.cache.set.assert_any_call(self.mydict.remote_cache_key, {u'hello': u'bar'})
-        self.cache.set.assert_any_call(
-            self.mydict.remote_cache_last_updated_key,
-            self.mydict._last_checked_for_remote_changes
-        )
+        self.assertEquals(self.cache.set_many.call_count, 1)
+        self.cache.set_many.assert_any_call({
+            self.mydict.remote_cache_key: {u'hello': u'bar'},
+            self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes
+        })
 
     def test_switch_delete(self):
         self.mydict['hello'] = 'foo'
         self.cache.reset_mock()
         del self.mydict['hello']
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 2)
-        self.cache.set.assert_any_call(self.mydict.remote_cache_key, {})
-        self.cache.set.assert_any_call(
-            self.mydict.remote_cache_last_updated_key,
-            self.mydict._last_checked_for_remote_changes
-        )
+        self.assertEquals(self.cache.set_many.call_count, 1)
+        self.cache.set_many.assert_any_call({
+            self.mydict.remote_cache_key: {},
+            self.mydict.remote_cache_last_updated_key: self.mydict._last_checked_for_remote_changes
+        })
 
     def test_switch_access(self):
         self.mydict['hello'] = 'foo'
@@ -314,7 +311,7 @@ class CacheIntegrationTest(TestCase):
         foo = self.mydict['hello']
         self.assertEquals(foo, 'foo')
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 0)
+        self.assertEquals(self.cache.set_many.call_count, 0)
 
     def test_switch_access_without_local_cache(self):
         self.mydict['hello'] = 'foo'
@@ -326,14 +323,14 @@ class CacheIntegrationTest(TestCase):
         # "1" here signifies that we didn't ask the remote cache for its last
         # updated value
         self.assertEquals(self.cache.get.call_count, 1)
-        self.assertEquals(self.cache.set.call_count, 0)
+        self.assertEquals(self.cache.set_many.call_count, 0)
         self.cache.get.assert_any_call(self.mydict.remote_cache_key)
         self.cache.reset_mock()
         foo = self.mydict['hello']
         foo = self.mydict['hello']
         foo = self.mydict['hello']
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 0)
+        self.assertEquals(self.cache.set_many.call_count, 0)
 
     def test_switch_access_with_expired_local_cache(self):
         self.mydict['hello'] = 'foo'
@@ -342,13 +339,13 @@ class CacheIntegrationTest(TestCase):
         foo = self.mydict['hello']
         self.assertEquals(foo, 'foo')
         self.assertEquals(self.cache.get.call_count, 2)
-        self.assertEquals(self.cache.set.call_count, 0)
+        self.assertEquals(self.cache.set_many.call_count, 0)
         self.cache.get.assert_any_call(self.mydict.remote_cache_last_updated_key)
         self.cache.reset_mock()
         foo = self.mydict['hello']
         foo = self.mydict['hello']
         self.assertEquals(self.cache.get.call_count, 0)
-        self.assertEquals(self.cache.set.call_count, 0)
+        self.assertEquals(self.cache.set_many.call_count, 0)
 
     def test_does_not_pull_down_all_data(self):
         self.mydict['hello'] = 'foo'
@@ -439,8 +436,10 @@ class CachedDictTest(TestCase):
         mydict = CachedDict(timeout=100)
 
         now = int(time.time())
-        mydict.remote_cache.set(mydict.remote_cache_key, {'MYFLAG': 'value1'})
-        mydict.remote_cache.set(mydict.remote_cache_last_updated_key, now)
+        mydict.remote_cache.set_many({
+            mydict.remote_cache_key: {'MYFLAG': 'value1'},
+            mydict.remote_cache_last_updated_key: now
+        })
 
         # load the local cache from remote cache
         mydict._populate()

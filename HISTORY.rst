@@ -8,6 +8,7 @@ Pending release
 ---------------
 
 * Fixed local cache never expiring if value was checked too often.
+* Use Django's ``cache.set_many`` for more efficient storage.
 
 1.5.0 (2016-01-11)
 ------------------
