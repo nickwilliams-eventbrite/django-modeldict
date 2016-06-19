@@ -85,6 +85,9 @@ class ModelDict(CachedDict):
         self.model._default_manager.filter(**{self.key: key}).delete()
         # self._populate(reset=True)
 
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self.model.__name__)
+
     def setdefault(self, key, value):
         if isinstance(value, self.model):
             value = getattr(value, self.value)

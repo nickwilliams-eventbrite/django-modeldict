@@ -54,7 +54,7 @@ class CachedDict(object):
         return iter(self._local_cache)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.model.__name__)
+        return "<%s>" % (self.__class__.__name__,)
 
     def iteritems(self):
         self._populate()
@@ -131,7 +131,7 @@ class CachedDict(object):
 
         return (
             self._local_last_updated is None or
-            int(remote_last_updated) > self._local_last_updated
+            int(remote_last_updated) >= self._local_last_updated
         )
 
     def get_cache_data(self):
@@ -183,12 +183,12 @@ class CachedDict(object):
             if local_cache_is_invalid or local_cache_is_invalid is None:
                 self._local_cache = self.remote_cache.get(self.remote_cache_key)
 
+                # We've updated from remote, so mark ourselves as
+                # such so that we won't expire until the next timeout
+                self._local_last_updated = now
+
             # We last checked for remote changes just now
             self._last_checked_for_remote_changes = now
-
-            # No matter what, we've updated from remote, so mark ourselves as
-            # such so that we won't expire until the next timeout
-            self._local_last_updated = now
 
         # Update from cache if local_cache is still empty
         if self._local_cache is None:

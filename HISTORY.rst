@@ -8,6 +8,11 @@ Pending release
 ---------------
 
 * New release notes here
+* Fixed update missing when ``_local_last_updated`` coudl be set even when it
+  wasn't updated
+* Fixed update missing from integer rounding in time comparison
+* Fixed ``CachedDict.__repr__`` so it works for other subclasses of
+  ``CachedDict`` than ``ModelDict`` (don't assume ``self.model`` exists)
 
 1.5.1 (2016-06-13)
 ------------------
