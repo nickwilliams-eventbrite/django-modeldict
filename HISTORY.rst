@@ -8,6 +8,10 @@ Pending release
 ---------------
 
 * New release notes here
+
+1.5.2 (2016-07-31)
+------------------
+
 * Fixed update missing when ``_local_last_updated`` coudl be set even when it
   wasn't updated
 * Fixed update missing from integer rounding in time comparison
