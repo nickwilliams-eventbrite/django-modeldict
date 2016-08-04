@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 
 def dummy_view(request):
@@ -6,7 +6,6 @@ def dummy_view(request):
     return HttpResponse()
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', dummy_view, name='modeldict-home'),
-)
+]
