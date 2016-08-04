@@ -1,0 +1,10 @@
+celery
+docutils
+flake8
+isort
+mock
+multilint
+Pygments
+pytest
+pytest-cov
+pytest-django
