@@ -131,7 +131,7 @@ class CachedDict(object):
 
         return (
             self._local_last_updated is None or
-            int(remote_last_updated) >= self._local_last_updated
+            remote_last_updated > self._local_last_updated
         )
 
     def get_cache_data(self):
@@ -161,7 +161,7 @@ class CachedDict(object):
 
         - The global cache has expired (via remote_cache_last_updated_key)
         """
-        now = int(time.time())
+        now = time.time()
 
         # If asked to reset, then simply set local cache to None
         if reset:
@@ -199,7 +199,7 @@ class CachedDict(object):
     def _update_cache_data(self):
         self._local_cache = self.get_cache_data()
 
-        now = int(time.time())
+        now = time.time()
         self._local_last_updated = now
         self._last_checked_for_remote_changes = now
 

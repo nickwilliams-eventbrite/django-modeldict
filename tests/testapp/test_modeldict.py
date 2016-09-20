@@ -412,9 +412,9 @@ class CachedDictTest(TestCase):
 
     def test_is_not_expired_if_remote_cache_is_old(self):
         # set it to an expired time
-        self.mydict._local_cache = dict(a=1)
-        self.mydict._local_last_updated = time.time() - 101
-        self.cache.get.return_value = self.mydict._local_last_updated
+        self.mydict._local_cache = {'a': 1}
+        self.mydict._local_last_updated = time.time() - 100
+        self.cache.get.return_value = self.mydict._local_last_updated - 1
 
         result = self.mydict.local_cache_is_invalid()
 
@@ -448,15 +448,14 @@ class CachedDictTest(TestCase):
         })
 
         # load the local cache from remote cache
-        # this sets: mydict._local_last_updated = int(time.time())
+        # this sets: mydict._local_last_updated = time.time()
         mydict._populate()
 
         # simulate remote cache updated by external process
-        # time is rounded again in remote_cache:
-        # remote_cache[remote_cache_last_updated_key] = int(time.time())
+        # remote_cache[remote_cache_last_updated_key] = time.time()
         mydict.remote_cache.set_many({
             mydict.remote_cache_key: {'MYFLAG': 'value2'},
-            mydict.remote_cache_last_updated_key: int(time.time())
+            mydict.remote_cache_last_updated_key: time.time()
         })
 
         assert mydict.local_cache_is_invalid()
@@ -465,7 +464,7 @@ class CachedDictTest(TestCase):
         cache.clear()
         mydict = CachedDict(timeout=100)
 
-        now = int(time.time())
+        now = time.time()
         mydict.remote_cache.set_many({
             mydict.remote_cache_key: {'MYFLAG': 'value1'},
             mydict.remote_cache_last_updated_key: now
@@ -499,7 +498,7 @@ class CachedDictTest(TestCase):
             mydict.remote_cache_last_updated_key: 12345
         })
         # load the local cache from remote cache
-        # this sets: mydict._local_last_updated = int(time.time())
+        # this sets: mydict._local_last_updated = time.time()
         mydict._populate()
         local_last_updated = mydict._local_last_updated
         assert mydict._local_cache == {'MYFLAG': 'value1'}
@@ -507,7 +506,7 @@ class CachedDictTest(TestCase):
         with mock.patch('time.time', mock.Mock(return_value=time.time() + 101)):
             mydict.remote_cache.set_many({
                 mydict.remote_cache_key: {'MYFLAG': 'value2'},
-                mydict.remote_cache_last_updated_key: int(time.time())
+                mydict.remote_cache_last_updated_key: time.time()
             })
             assert mydict.local_cache_has_expired()
             assert mydict.local_cache_is_invalid()
@@ -525,7 +524,7 @@ class CachedDictTest(TestCase):
             mydict.remote_cache_last_updated_key: 12345
         })
         # load the local cache from remote cache
-        # this sets: mydict._local_last_updated = int(time.time())
+        # this sets: mydict._local_last_updated = time.time()
         mydict._populate()
         local_last_updated = mydict._local_last_updated
 
