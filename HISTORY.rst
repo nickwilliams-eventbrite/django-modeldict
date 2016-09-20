@@ -8,6 +8,10 @@ Pending release
 ---------------
 
 * New release notes here
+
+1.5.3 (2016-09-20)
+------------------
+
 * Stop rounding ``time.time()`` down to the nearest integer, so we are more fine grained around expiration. It might
   also fix a subtle timing bug around re-fetching the remote cache unnecessarily.
 
