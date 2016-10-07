@@ -15,7 +15,7 @@ enum34==1.1.6             # via flake8
 flake8==3.0.4
 funcsigs==1.0.2           # via mock
 isort==4.2.5
-kombu==3.0.36             # via celery
+kombu==3.0.37             # via celery
 mccabe==0.5.2             # via flake8
 mock==2.0.0
 multilint==2.0.0
