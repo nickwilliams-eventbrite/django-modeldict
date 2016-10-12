@@ -10,7 +10,7 @@ class CachedDict(object):
     def __init__(self, cache=cache, timeout=30):
         cls_name = type(self).__name__
 
-        self._local_cache = None
+        self._local_cache = {}
         self._local_last_updated = None
 
         self._last_checked_for_remote_changes = 0.0
@@ -26,6 +26,9 @@ class CachedDict(object):
         try:
             return self._local_cache[key]
         except KeyError:
+            if self._local_last_updated is None:
+                # Another thread reset the cache
+                return self[key]
             value = self.get_default(key)
 
             if value is NoValue:
@@ -40,9 +43,7 @@ class CachedDict(object):
         raise NotImplementedError
 
     def __len__(self):
-        if self._local_cache is None:
-            self._populate()
-
+        self._populate()
         return len(self._local_cache)
 
     def __contains__(self, key):
@@ -115,8 +116,8 @@ class CachedDict(object):
 
         A return value of ``None`` signifies that no data was available.
         """
-        # If the local_cache is empty, avoid hitting memcache entirely
-        if self._local_cache is None:
+        # If the local_cache hasn't been set up, avoid hitting memcache entirely
+        if self._local_last_updated is None:
             return True
 
         remote_last_updated = self.remote_cache.get(
@@ -144,9 +145,9 @@ class CachedDict(object):
         """
         Clears the in-process cache.
         """
-        self._local_cache = None
         self._local_last_updated = None
         self._last_checked_for_remote_changes = 0.0
+        self._local_cache.clear()
 
     def _populate(self, reset=False):
         """
@@ -163,9 +164,8 @@ class CachedDict(object):
         """
         now = time.time()
 
-        # If asked to reset, then simply set local cache to None
         if reset:
-            self._local_cache = None
+            self.clear_cache()
         # Otherwise, if the local cache has expired, we need to go check with
         # our remote last_updated value to see if the dict values have changed.
         elif self.local_cache_has_expired():
@@ -181,17 +181,18 @@ class CachedDict(object):
             # pull in the values from the remote cache and set it to the
             # local_cache
             if local_cache_is_invalid or local_cache_is_invalid is None:
-                self._local_cache = self.remote_cache.get(self.remote_cache_key)
-
-                # We've updated from remote, so mark ourselves as
-                # such so that we won't expire until the next timeout
-                self._local_last_updated = now
+                remote_value = self.remote_cache.get(self.remote_cache_key)
+                if remote_value is not None:
+                    self._local_cache = remote_value
+                    # We've updated from remote, so mark ourselves as
+                    # such so that we won't expire until the next timeout
+                    self._local_last_updated = now
 
             # We last checked for remote changes just now
             self._last_checked_for_remote_changes = now
 
         # Update from cache if local_cache is still empty
-        if self._local_cache is None:
+        if self._local_last_updated is None:
             self._update_cache_data()
 
         return self._local_cache

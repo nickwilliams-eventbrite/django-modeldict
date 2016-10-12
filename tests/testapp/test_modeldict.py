@@ -156,7 +156,7 @@ class ModelDictTest(TransactionTestCase):
 
         mydict = ModelDict(ModelDictModel, key='key', value='value')
 
-        assert mydict._local_cache is None
+        assert mydict._local_cache == {}
 
         mydict['test_modeldict_expirey'] = 'hello'
 
@@ -318,7 +318,8 @@ class CacheIntegrationTest(TestCase):
 
     def test_switch_access_without_local_cache(self):
         self.mydict['hello'] = 'foo'
-        self.mydict._local_cache = None
+        self.mydict._local_cache = {}
+        self.mydict._local_last_updated = None
         self.mydict._last_checked_for_remote_changes = 0.0
         self.cache.reset_mock()
         foo = self.mydict['hello']
@@ -373,6 +374,7 @@ class CachedDictTest(TestCase):
     @mock.patch('modeldict.base.CachedDict.local_cache_is_invalid', mock.Mock(return_value=False))
     def test_expired_does_update_data(self, _update_cache_data):
         self.mydict._local_cache = {}
+        self.mydict._local_last_updated = time.time()
         self.mydict._last_checked_for_remote_changes = time.time()
         self.mydict._populate()
 
@@ -383,6 +385,7 @@ class CachedDictTest(TestCase):
     @mock.patch('modeldict.base.CachedDict.local_cache_is_invalid', mock.Mock(return_value=True))
     def test_reset_does_expire(self, _update_cache_data):
         self.mydict._local_cache = {}
+        self.mydict._local_last_updated = time.time()
         self.mydict._last_checked_for_remote_changes = time.time()
         self.mydict._populate(reset=True)
 
@@ -393,6 +396,7 @@ class CachedDictTest(TestCase):
     @mock.patch('modeldict.base.CachedDict.local_cache_is_invalid', mock.Mock(return_value=True))
     def test_does_not_expire_by_default(self, _update_cache_data):
         self.mydict._local_cache = {}
+        self.mydict._local_last_updated = time.time()
         self.mydict._last_checked_for_remote_changes = time.time()
         self.mydict._populate()
 
@@ -424,15 +428,17 @@ class CachedDictTest(TestCase):
     def test_is_expired_if_remote_cache_is_new(self):
         # set it to an expired time, but with a local cache
         self.mydict._local_cache = dict(a=1)
-        self.mydict._last_checked_for_remote_changes = time.time() - 101
+        last_update = time.time() - 101
+        self.mydict._local_last_updated = last_update
+        self.mydict._last_checked_for_remote_changes = last_update
         self.cache.get.return_value = time.time()
 
         result = self.mydict.local_cache_is_invalid()
 
+        assert result
         self.cache.get.assert_called_once_with(
             self.mydict.remote_cache_last_updated_key
         )
-        assert result
 
     def test_is_invalid_if_local_cache_is_none(self):
         self.mydict._local_cache = None
