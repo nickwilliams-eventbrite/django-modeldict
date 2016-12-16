@@ -6,7 +6,7 @@
 #
 amqp==2.1.4               # via kombu
 billiard==3.5.0.2         # via celery
-celery==4.0.1
+celery==4.0.2
 configparser==3.5.0       # via flake8
 coverage==4.2             # via pytest-cov
 docutils==0.13.1
@@ -14,7 +14,7 @@ enum34==1.1.6             # via flake8
 flake8==3.2.1
 funcsigs==1.0.2           # via mock
 isort==4.2.5
-kombu==4.0.1              # via celery
+kombu==4.0.2              # via celery
 mccabe==0.5.3             # via flake8
 mock==2.0.0
 multilint==2.0.2
