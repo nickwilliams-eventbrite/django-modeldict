@@ -8,3 +8,4 @@ Pygments
 pytest
 pytest-cov
 pytest-django
+pytz
