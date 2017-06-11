@@ -5,6 +5,7 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 amqp==2.1.4               # via kombu
+backports.unittest-mock==1.3
 billiard==3.5.0.2         # via celery
 celery==4.0.2
 configparser==3.5.0       # via flake8

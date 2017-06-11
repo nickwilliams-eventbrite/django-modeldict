@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 
 import time
+from unittest import mock
 
-import mock
 import pytest
 from django.core.cache import cache
 from django.core.signals import request_finished

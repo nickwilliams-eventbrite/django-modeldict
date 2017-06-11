@@ -1,3 +1,4 @@
+backports.unittest_mock
 celery
 docutils
 flake8
