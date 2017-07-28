@@ -12,7 +12,7 @@ configparser==3.5.0       # via flake8
 coverage==4.4.1           # via pytest-cov
 docutils==0.13.1
 enum34==1.1.6             # via flake8
-flake8==3.3.0
+flake8==3.4.1
 funcsigs==1.0.2           # via mock
 isort==4.2.15
 kombu==4.1.0              # via celery
