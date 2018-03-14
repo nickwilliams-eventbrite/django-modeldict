@@ -1,5 +1,6 @@
 import pytest
 from django.test import SimpleTestCase
+
 from modeldict.base import CachedDict
 
 

@@ -7,9 +7,9 @@ import pytest
 from django.core.cache import cache
 from django.core.signals import request_finished
 from django.test import TestCase, TransactionTestCase
+
 from modeldict import ModelDict
 from modeldict.base import CachedDict
-
 from testapp.models import ModelDictModel
 
 
