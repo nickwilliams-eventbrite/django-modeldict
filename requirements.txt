@@ -21,7 +21,7 @@ kombu==4.1.0              # via celery
 mccabe==0.6.1             # via flake8
 mock==2.0.0
 more-itertools==4.1.0     # via pytest
-multilint==2.2.1
+multilint==2.3.0
 pbr==4.0.2                # via mock
 pluggy==0.6.0             # via pytest
 py==1.5.3                 # via pytest
@@ -30,7 +30,7 @@ pyflakes==1.6.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
 pytest-django==3.2.1
-pytest==3.5.0
+pytest==3.5.1
 pytz==2018.4
-six==1.11.0               # via mock, more-itertools, pytest
+six==1.11.0               # via mock, more-itertools, multilint, pytest
 vine==1.1.4               # via amqp
