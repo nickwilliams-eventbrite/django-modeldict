@@ -12,7 +12,7 @@ Pending release
 1.5.4 (2016-10-28)
 ------------------
 
-* Fixed a race condition in threaded code. See https://github.com/YPlan/django-modeldict/pull/40 for a detailed
+* Fixed a race condition in threaded code. See https://github.com/adamchainz/django-modeldict/pull/40 for a detailed
   explanation. Thanks @Jaidan.
 
 1.5.3 (2016-09-20)
