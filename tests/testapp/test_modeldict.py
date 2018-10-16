@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import time
-from unittest import mock
 
 import pytest
 from django.core.cache import cache
@@ -11,6 +10,11 @@ from django.test import TestCase, TransactionTestCase
 from modeldict import ModelDict
 from modeldict.base import CachedDict
 from testapp.models import ModelDictModel
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 
 class ModelDictTest(TransactionTestCase):

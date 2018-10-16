@@ -7,7 +7,6 @@
 amqp==2.3.2               # via kombu
 atomicwrites==1.2.1       # via pytest
 attrs==18.2.0             # via pytest
-backports.unittest-mock==1.4
 billiard==3.5.0.4         # via celery
 celery==4.2.1
 configparser==3.5.0       # via flake8

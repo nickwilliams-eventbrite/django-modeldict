@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 import os
 
+import django
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = True
@@ -26,18 +28,23 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'modeldict',
     'testapp',
 )
 
-MIDDLEWARE_CLASSES = (
+_middleware = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
+if django.VERSION >= (1, 10):
+    MIDDLEWARE = _middleware
+else:
+    MIDDLEWARE_CLASSES = _middleware
 
 ROOT_URLCONF = 'urls'
 LANGUAGE_CODE = 'en-us'
