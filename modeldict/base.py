@@ -1,7 +1,6 @@
 import time
 
 from django.core.cache import cache
-from django.utils import six
 
 NoValue = object()
 
@@ -57,27 +56,17 @@ class CachedDict(object):
     def __repr__(self):
         return "<%s>" % (self.__class__.__name__,)
 
-    def iteritems(self):
-        self._populate()
-        return six.iteritems(self._local_cache)
-
-    def itervalues(self):
-        self._populate()
-        return six.itervalues(self._local_cache)
-
-    def iterkeys(self):
-        self._populate()
-        return six.iterkeys(self._local_cache)
-
-    def keys(self):
-        return list(self.iterkeys())
-
-    def values(self):
-        return list(self.itervalues())
-
     def items(self):
         self._populate()
         return self._local_cache.items()
+
+    def values(self):
+        self._populate()
+        return self._local_cache.values()
+
+    def keys(self):
+        self._populate()
+        return self._local_cache.keys()
 
     def get(self, key, default=None):
         self._populate()

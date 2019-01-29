@@ -7,7 +7,12 @@ History
 Pending release
 ---------------
 
-* New release notes here
+.. Add new release notes below here
+
+* Drop Python 2 support, only Python 3.4+ is supported now.
+* Remove ``iteritems()``, ``iterkeys()``, and ``itervalues()`` methods from
+  ``ModelDict``, and move ``items()``, ``keys()``, and ``values()`` to Python 3
+  semantics, returning iterators rather than lists.
 
 1.5.4 (2016-10-28)
 ------------------

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import time
 
 import pytest
@@ -125,35 +123,20 @@ class ModelDictTest(TransactionTestCase):
         mydict['hello'] = 'world'
         assert next(iter(mydict)) == 'hello'
 
-    def test_modeldict_iteritems(self):
+    def test_modeldict_items(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value')
         mydict['hello'] = 'world'
-        assert list(mydict.iteritems()) == [('hello', 'world')]
-
-    def test_modeldict_itervalues(self):
-        mydict = ModelDict(ModelDictModel, key='key', value='value')
-        mydict['hello'] = 'world'
-        assert list(mydict.itervalues()) == ['world']
-
-    def test_modeldict_iterkeys(self):
-        mydict = ModelDict(ModelDictModel, key='key', value='value')
-        mydict['hello'] = 'world'
-        assert list(mydict.iterkeys()) == ['hello']
-
-    def test_modeldict_keys(self):
-        mydict = ModelDict(ModelDictModel, key='key', value='value')
-        mydict['hello'] = 'world'
-        assert list(mydict.keys()) == ['hello']
+        assert list(mydict.items()) == [('hello', 'world')]
 
     def test_modeldict_values(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value')
         mydict['hello'] = 'world'
         assert list(mydict.values()) == ['world']
 
-    def test_modeldict_items(self):
+    def test_modeldict_keys(self):
         mydict = ModelDict(ModelDictModel, key='key', value='value')
         mydict['hello'] = 'world'
-        assert list(mydict.items()) == [('hello', 'world')]
+        assert list(mydict.keys()) == ['hello']
 
     def test_modeldict_expirey(self):
         base_count = ModelDictModel.objects.count()

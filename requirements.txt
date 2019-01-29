@@ -9,20 +9,15 @@ atomicwrites==1.2.1       # via pytest
 attrs==18.2.0             # via pytest
 billiard==3.5.0.5         # via celery
 celery==4.2.1
-configparser==3.7.1       # via flake8
 coverage==4.5.2           # via pytest-cov
 docutils==0.14
-enum34==1.1.6             # via flake8
 flake8==3.6.0
-funcsigs==1.0.2           # via mock, pytest
-futures==3.1.1
 isort==4.3.4
 kombu==4.2.2.post1        # via celery
 mccabe==0.6.1             # via flake8
 mock==2.0.0
 more-itertools==5.0.0     # via pytest
 multilint==2.4.0
-pathlib2==2.3.3           # via pytest, pytest-django
 pbr==5.1.1                # via mock
 pluggy==0.8.1             # via pytest
 py==1.7.0                 # via pytest
@@ -33,6 +28,5 @@ pytest-cov==2.6.1
 pytest-django==3.4.5
 pytest==4.1.1
 pytz==2018.9
-scandir==1.9.0            # via pathlib2
-six==1.12.0               # via mock, more-itertools, multilint, pathlib2, pytest
+six==1.12.0               # via mock, more-itertools, multilint, pytest
 vine==1.2.0               # via amqp
