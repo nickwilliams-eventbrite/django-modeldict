@@ -9,11 +9,16 @@ Pending release
 
 .. Add new release notes below here
 
+2.0.0 (2019-01-29)
+------------------
+
 * Drop Python 2 support, only Python 3.4+ is supported now.
 * Drop Django 1.8, 1.9, and 1.10 support. Only Django 1.11+ is supported now.
 * Remove ``iteritems()``, ``iterkeys()``, and ``itervalues()`` methods from
   ``ModelDict``, and move ``items()``, ``keys()``, and ``values()`` to Python 3
   semantics, returning iterators rather than lists.
+* Include LICENSE file in wheel.
+* Tested with Django 2.1 (no changes were needed for compatibility).
 
 1.5.4 (2016-10-28)
 ------------------
