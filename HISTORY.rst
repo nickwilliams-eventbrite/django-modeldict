@@ -10,6 +10,7 @@ Pending release
 .. Add new release notes below here
 
 * Drop Python 2 support, only Python 3.4+ is supported now.
+* Drop Django 1.8, 1.9, and 1.10 support. Only Django 1.11+ is supported now.
 * Remove ``iteritems()``, ``iterkeys()``, and ``itervalues()`` methods from
   ``ModelDict``, and move ``items()``, ``keys()``, and ``values()`` to Python 3
   semantics, returning iterators rather than lists.

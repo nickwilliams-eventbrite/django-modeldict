@@ -34,6 +34,9 @@ setup(
     license='Apache License 2.0',
     include_package_data=True,
     python_requires='>=3.4',
+    install_requires=[
+        'Django>=1.11',
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
