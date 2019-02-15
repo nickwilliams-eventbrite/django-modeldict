@@ -14,17 +14,13 @@ Pending release
 
 * No functional changes. This is a re-release of version 2.0.0 to fix immutable
   metadata on PyPI so that Pip on Python 2 doesn't pick up the Python 3 only
-  2.X series. **Version 2.0.0 will be pulled from PyPI on 2019-02-29.**
+  2.X series. **Version 2.0.0 will be pulled from PyPI on 2019-03-01.**
 
 2.0.0 (2019-01-29)
 ------------------
 
-----
-
 **This version is due to be pulled from PyPI, please use version 2.0.1 as per
 its above release note.**
-
-----
 
 * Drop Python 2 support, only Python 3.4+ is supported now.
 * Drop Django 1.8, 1.9, and 1.10 support. Only Django 1.11+ is supported now.
