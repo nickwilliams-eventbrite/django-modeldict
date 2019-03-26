@@ -176,6 +176,9 @@ class CachedDict(object):
                     # We've updated from remote, so mark ourselves as
                     # such so that we won't expire until the next timeout
                     self._local_last_updated = now
+                else:
+                    self._local_cache = None
+                    self._local_last_updated = None
 
             # We last checked for remote changes just now
             self._last_checked_for_remote_changes = now
